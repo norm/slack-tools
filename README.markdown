@@ -5,44 +5,44 @@ All written in python. You will need to have the `requests` library installed
 (`sudo pip install requests`).
 
 
-*   `add-github-webhook`
+## add-github-webhook
 
-    If you don't like Slack having write access to Github in order to provide
-    notifications, use this script to easily add a webhook to your repo.
+If you don't like Slack having write access to Github in order to provide
+notifications, use this script to easily add a webhook to your repo.
 
-    Usage:
+Usage:
 
-        export GITHUB_TOKEN=somethingsomethingtoken
-        export SLACK_WEBHOOK=https://hooks.slack.com/...
-        python add-github-webhook norm/slack-tools
+    export GITHUB_TOKEN=somethingsomethingtoken
+    export SLACK_WEBHOOK=https://hooks.slack.com/...
+    python add-github-webhook norm/slack-tools
 
 
-*   `pubsub-to-slack`
+## pubsub-to-slack
 
-    Push notifications to Slack by using redis pubsub. For when you don't
-    want your app to push information into Slack directly.
+Push notifications to Slack by using redis pubsub. For when you don't
+want your app to push information into Slack directly.
 
-    Listens to the namespace `chatter*`.
+Listens to the namespace `chatter*`.
 
-    Pre-requisites:
+Pre-requisites:
 
-    *   Have redis running.
+*   Have redis running.
 
-    *   Install python libraries:
+*   Install python libraries:
 
-            pip install redis requests
+        pip install redis requests
 
-    Run the script:
+Run the script:
 
-        export SLACK_WEBHOOK=https://hooks.slack.com/...
-        python pubsub-to-slack
+    export SLACK_WEBHOOK=https://hooks.slack.com/...
+    python pubsub-to-slack
 
-    Then publish messages to redis:
+Then publish messages to redis:
 
-        # send plain text
-        redis-cli publish chatter 'hello world'
+    # send plain text
+    redis-cli publish chatter 'hello world'
 
-        # send a JSON payload
-        redis-cli publish chatter '{"text":"Hello", "username":"via-redis"}'
+    # send a JSON payload
+    redis-cli publish chatter '{"text":"Hello", "username":"via-redis"}'
 
-    ...and they should appear in Slack!
+...and they should appear in Slack!
