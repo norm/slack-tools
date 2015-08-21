@@ -1,33 +1,62 @@
 #!/usr/bin/env python
 
 import json
-from os import getenv
+import os
+from optparse import OptionParser
 import requests
-from sys import argv
+import sys
+import time
 
 
-GITHUB_TOKEN = getenv('GITHUB_TOKEN')
-webhook = getenv('SLACK_WEBHOOK')
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+SLACK_WEBHOOK = os.getenv('SLACK_WEBHOOK')
+headers = {'Authorization': 'token %s' % GITHUB_TOKEN}
 
-repo = argv[1]
-if webhook is None:
-    webhook = argv[2]
 
-token = 'token %s' % GITHUB_TOKEN
-url = 'https://api.github.com/repos/%s/hooks' % repo
-headers = {'Authorization': token}
+def get_all_user_repos():
+    repos = []
+    base_url = 'https://api.github.com/user/repos?affiliation=owner'
+    page = 1
 
-response = requests.post(
-    url,
-    headers=headers,
-    data=json.dumps({
-        'name': 'web',
-        'active': True,
-        'events': ['*'],
-        'config': {
-            'url': webhook,
-            'content_type': 'json',
-        },
-    })
-)
-print response, response.json()
+    while page:
+        url = '%s&page=%s' % (base_url, page)
+        page += 1
+        response = requests.get(url, headers=headers)
+        data = response.json()
+        if len(data):
+            for repo in data:
+                repos.append(repo['full_name'])
+            time.sleep(1)
+        else:
+            page = None
+
+    return repos
+
+def add_webhook(repo):
+    response = requests.post(
+        'https://api.github.com/repos/%s/hooks' % repo,
+        headers = headers,
+        data = json.dumps({
+            'name': 'web',
+            'active': True,
+            'events': ['*'],
+            'config': {
+                'url': SLACK_WEBHOOK,
+                'content_type': 'json',
+            },
+        })
+    )
+    print response, response.json()
+
+
+parser = OptionParser()
+parser.add_option(
+    '-u', '--user', dest='user', help="Apply to all user repositories",
+    action='store_true')
+(options, args) = parser.parse_args()
+
+if options.user:
+    args = get_all_user_repos()
+
+for repo in args:
+    add_webhook(repo)

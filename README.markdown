@@ -12,9 +12,15 @@ notifications, use this script to easily add a webhook to your repo.
 
 Usage:
 
+    # set the env variables
     export GITHUB_TOKEN=somethingsomethingtoken
     export SLACK_WEBHOOK=https://hooks.slack.com/...
-    python add-github-webhook norm/slack-tools
+
+    # add one (or more) repos...
+    python add-github-webhook norm/slack-tools norm/bash-composition
+
+    # ...or add all repos owned by the GITHUB_TOKEN's owner
+    python add-github-webhook -u
 
 
 ## pubsub-to-slack
