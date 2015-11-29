@@ -49,9 +49,28 @@ def add_webhook(repo):
     print response, response.json()
 
 
+def delete_webhooks(repo):
+    response = requests.get(
+        'https://api.github.com/repos/%s/hooks' % repo,
+        headers = headers,
+    )
+    hooks = response.json()
+    for hook in hooks:
+        url = hook['url']
+        print url
+        response = requests.delete(
+            url,
+            headers = headers,
+        )
+        print response
+
+
 parser = OptionParser()
 parser.add_option(
-    '-u', '--user', dest='user', help="Apply to all user repositories",
+    '-u', '--user', dest='user', help='Apply to all user repositories',
+    action='store_true')
+parser.add_option(
+    '-d', '--delete', dest='delete', help='Delete webhooks',
     action='store_true')
 (options, args) = parser.parse_args()
 
@@ -59,4 +78,7 @@ if options.user:
     args = get_all_user_repos()
 
 for repo in args:
-    add_webhook(repo)
+    if options.delete:
+        delete_webhooks(repo)
+    else:
+        add_webhook(repo)

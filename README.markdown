@@ -22,6 +22,14 @@ Usage:
     # ...or add all repos owned by the GITHUB_TOKEN's owner
     python add-github-webhook -u
 
+And if you change your mind:
+
+    # delete all webhooks on one (or more) repos...
+    python add-github-webhook -d norm/slack-tools norm/bash-composition
+
+    # ...or all repos owned by the GITHUB_TOKEN's owner
+    python add-github-webhook -ud
+
 
 ## pubsub-to-slack
 
